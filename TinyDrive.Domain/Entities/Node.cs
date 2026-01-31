@@ -20,9 +20,15 @@ public sealed class Node : Entity
 
 	public Guid? ParentId { get; init; }
 
+	public required string MaterializedPath { get; init; }
+
 	public DateTime CreatedAtUtc { get; init; }
 
 	public DateTime? LastModifiedAtUtc { get; init; }
+
+	public DateTime? DeletedAtUtc { get; set; }
+
+	public bool IsDeleted { get; set; }
 
 	[NotMapped] public string DisplayName => string.IsNullOrEmpty(Extension) ? Name : $"{Name}.{Extension}";
 

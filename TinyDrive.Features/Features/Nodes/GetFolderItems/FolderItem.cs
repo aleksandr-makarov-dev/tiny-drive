@@ -1,3 +1,9 @@
 ﻿namespace TinyDrive.Features.Features.Nodes.GetFolderItems;
 
-public record FolderItem(Guid Id, string Name, bool IsFolder, DateTime CreatedAtUtc, DateTime? LastModifiedAtUtc);
+public sealed record FolderItem(
+	Guid Id,
+	string Name,
+	bool IsFolder,
+	string MaterializedPath,
+	DateTime CreatedAtUtc,
+	DateTime? LastModifiedAtUtc);

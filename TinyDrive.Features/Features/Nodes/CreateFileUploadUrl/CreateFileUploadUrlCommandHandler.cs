@@ -21,15 +21,21 @@ public sealed class CreateFileUploadUrlCommandHandler(
 	public async Task<ErrorOr<CreateUploadUrlResponse>> Handle(CreateFileUploadUrlCommand request,
 		CancellationToken cancellationToken)
 	{
+		Node? parent = null;
+
 		// Check if Parent Folder exists
-		if (request.ParentFolderId.HasValue &&
-		    !await ParentFolderExistsAsync(request.ParentFolderId.Value, cancellationToken: cancellationToken))
+		if (request.ParentFolderId.HasValue)
 		{
-			logger.LogWarning("Parent folder with id '{ParentId}' not found", request.ParentFolderId);
-			return NodeErrors.ParentFolderNotFound(request.ParentFolderId.Value);
+			parent = await FindParentAsync(request.ParentFolderId.Value, cancellationToken: cancellationToken);
+
+			if (parent is null)
+			{
+				logger.LogWarning("Parent folder with id '{ParentId}' not found", request.ParentFolderId);
+				return NodeErrors.ParentFolderNotFound(request.ParentFolderId.Value);
+			}
 		}
 
-		var file = CreateFile(request.FileName, request.FileSizeBytes, request.ContentType, request.ParentFolderId);
+		var file = CreateFile(request.FileName, request.FileSizeBytes, request.ContentType, parent);
 
 		// Check if file with the same Name and Extension exists in Parent Folder
 		if (await IsDuplicateFileAsync(file.Name, file.Extension!, file.ParentId, cancellationToken: cancellationToken))
@@ -69,9 +75,9 @@ public sealed class CreateFileUploadUrlCommandHandler(
 		}
 	}
 
-	private Task<bool> ParentFolderExistsAsync(Guid parentId, CancellationToken cancellationToken)
+	private Task<Node?> FindParentAsync(Guid parentId, CancellationToken cancellationToken)
 	{
-		return dbContext.Nodes.AnyAsync(x => x.Id == parentId && x.IsFolder,
+		return dbContext.Nodes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == parentId && x.IsFolder,
 			cancellationToken: cancellationToken);
 	}
 
@@ -86,7 +92,7 @@ public sealed class CreateFileUploadUrlCommandHandler(
 			cancellationToken: cancellationToken);
 	}
 
-	private static Node CreateFile(string fileName, long fileSizeBytes, string contentType, Guid? parentId)
+	private static Node CreateFile(string fileName, long fileSizeBytes, string contentType, Node? parent)
 	{
 		var name = Path.GetFileNameWithoutExtension(fileName);
 		var extension = Path.GetExtension(fileName).TrimStart('.');
@@ -100,9 +106,9 @@ public sealed class CreateFileUploadUrlCommandHandler(
 			ContentType = contentType,
 			UploadStatus = UploadStatus.Uploading,
 			IsFolder = false,
-			ParentId = parentId,
+			ParentId = parent?.Id,
+			MaterializedPath = parent is null ? $"/{fileName}" : parent.MaterializedPath + fileName,
 			CreatedAtUtc = DateTime.UtcNow
 		};
 	}
-
 }

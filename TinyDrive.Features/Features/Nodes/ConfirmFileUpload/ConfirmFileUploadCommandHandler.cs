@@ -24,6 +24,7 @@ public sealed class ConfirmFileUploadCommandHandler(
 
 		if (file is null)
 		{
+			logger.LogWarning("Attempting to confirm a file upload but the file not found.");
 			return NodeErrors.FileNotFound(request.FileId);
 		}
 

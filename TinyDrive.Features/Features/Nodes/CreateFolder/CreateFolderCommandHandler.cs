@@ -7,16 +7,25 @@ using TinyDrive.Infrastructure.Data;
 
 namespace TinyDrive.Features.Features.Nodes.CreateFolder;
 
-internal sealed class CreateFolderCommandHandler(ApplicationDbContext dbContext)
+internal sealed class CreateFolderCommandHandler(
+	ApplicationDbContext dbContext,
+	ILogger<CreateFolderCommandHandler> logger)
 	: IRequestHandler<CreateFolderCommand, ErrorOr<Guid>>
 {
 
 	public async Task<ErrorOr<Guid>> Handle(CreateFolderCommand request, CancellationToken cancellationToken)
 	{
-		if (request.ParentFolderId.HasValue &&
-		    !await ParentFolderExistsAsync(request.ParentFolderId.Value, cancellationToken: cancellationToken))
+		Node? parent = null;
+
+		if (request.ParentFolderId.HasValue)
 		{
-			return NodeErrors.ParentFolderNotFound(request.ParentFolderId.Value);
+			parent = await FindParentAsync(request.ParentFolderId.Value, cancellationToken: cancellationToken);
+
+			if (parent is null)
+			{
+				logger.LogWarning("Parent folder with id '{ParentId}' not found", request.ParentFolderId);
+				return NodeErrors.ParentFolderNotFound(request.ParentFolderId.Value);
+			}
 		}
 
 		if (await IsDuplicateFolderAsync(request.Name, request.ParentFolderId, cancellationToken: cancellationToken))
@@ -24,7 +33,7 @@ internal sealed class CreateFolderCommandHandler(ApplicationDbContext dbContext)
 			return NodeErrors.FolderAlreadyExists(request.Name);
 		}
 
-		var folder = CreateFolder(request.Name, request.ParentFolderId);
+		var folder = CreateFolder(request.Name, parent);
 
 		dbContext.Nodes.Add(folder);
 
@@ -33,9 +42,9 @@ internal sealed class CreateFolderCommandHandler(ApplicationDbContext dbContext)
 		return folder.Id;
 	}
 
-	private Task<bool> ParentFolderExistsAsync(Guid parentId, CancellationToken cancellationToken)
+	private Task<Node?> FindParentAsync(Guid parentId, CancellationToken cancellationToken)
 	{
-		return dbContext.Nodes.AnyAsync(x => x.Id == parentId && x.IsFolder,
+		return dbContext.Nodes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == parentId && x.IsFolder,
 			cancellationToken: cancellationToken);
 	}
 
@@ -45,14 +54,15 @@ internal sealed class CreateFolderCommandHandler(ApplicationDbContext dbContext)
 			cancellationToken: cancellationToken);
 	}
 
-	private static Node CreateFolder(string name, Guid? parentId)
+	private static Node CreateFolder(string name, Node? parent)
 	{
 		return new Node
 		{
 			Id = Guid.NewGuid(),
 			Name = name,
-			ParentId = parentId,
 			IsFolder = true,
+			ParentId = parent?.Id,
+			MaterializedPath = parent is null ? $"/{name}/" : parent.MaterializedPath + name,
 			CreatedAtUtc = DateTime.UtcNow
 		};
 	}
