@@ -53,7 +53,7 @@ public sealed class ConfirmFileUploadCommandHandler(
 			var getObjectMetadataResult =
 				await s3Client.GetObjectMetadataAsync(getObjectMetadataRequest, cancellationToken: cancellationToken);
 
-			if (file.Size < getObjectMetadataResult.ContentLength)
+			if (getObjectMetadataResult.ContentLength < file.Size)
 			{
 				logger.LogWarning("The file upload has not completed successfully.");
 				return NodeErrors.FileNotFullyUploaded();

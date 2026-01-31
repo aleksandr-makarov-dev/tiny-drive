@@ -37,7 +37,7 @@ public sealed class CreateFileUploadUrlCommandHandler(
 			logger.LogWarning(
 				"Duplicate file detected: '{FileName}' in folder '{ParentId}'", file.DisplayName, file.ParentId);
 
-			return NodeErrors.FileAlreadyExists(file.Name);
+			return NodeErrors.FileAlreadyExists(file.DisplayName);
 		}
 
 		var expiresAtUtc = DateTime.Now.Add(S3.PresignedUrlExpiration);
