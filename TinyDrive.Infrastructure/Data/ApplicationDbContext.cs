@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TinyDrive.Domain.Nodes;
+using TinyDrive.Domain.Entities;
 
 namespace TinyDrive.Infrastructure.Data;
 
@@ -20,7 +20,19 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 			.IsRequired();
 
 		modelBuilder.Entity<Node>()
+			.Property(x => x.Extension)
+			.HasMaxLength(25);
+
+		modelBuilder.Entity<Node>()
+			.Property(x => x.ContentType)
+			.HasMaxLength(100);
+
+		modelBuilder.Entity<Node>()
 			.Property(x => x.IsFolder)
+			.IsRequired();
+
+		modelBuilder.Entity<Node>()
+			.Property(x => x.CreatedAtUtc)
 			.IsRequired();
 
 		modelBuilder.Entity<Node>()

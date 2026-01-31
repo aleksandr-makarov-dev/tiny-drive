@@ -1,7 +1,7 @@
 ﻿using ErrorOr;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using TinyDrive.Domain.Nodes;
+using TinyDrive.Domain.Entities;
 using TinyDrive.Features.Common.Errors;
 using TinyDrive.Infrastructure.Data;
 

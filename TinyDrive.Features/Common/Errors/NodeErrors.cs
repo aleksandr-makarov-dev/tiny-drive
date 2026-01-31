@@ -20,4 +20,12 @@ public static class NodeErrors
 		Error.NotFound(
 			$"{Prefix}.NotFound",
 			$"Node with id '{nodeId}' was not found.");
+
+	public static Error CreateUploadUrlFailure() => Error.Unexpected($"{Prefix}.CreateUploadUrl",
+		"An unexpected error occured during creating the upload url");
+
+	public static Error FileAlreadyExists() =>
+		Error.Conflict(
+			$"{Prefix}.FolderAlreadyExists",
+			"File already exists.");
 }

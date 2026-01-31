@@ -2,6 +2,7 @@
   <ItemGroup>
     <PackageReference Remove="Meziantou.Analyzer" />
     <PackageReference Include="Ardalis.GuardClauses" />
+    <PackageReference Include="AWSSDK.S3" />
     <PackageReference Include="EFCore.NamingConventions" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
   </ItemGroup>

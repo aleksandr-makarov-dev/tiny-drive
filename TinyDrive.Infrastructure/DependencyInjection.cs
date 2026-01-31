@@ -1,4 +1,5 @@
-﻿using Ardalis.GuardClauses;
+﻿using Amazon.S3;
+using Ardalis.GuardClauses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,18 @@ public static class DependencyInjection
 		{
 			options.UseNpgsql(connectionString: connectionString);
 			options.UseSnakeCaseNamingConvention();
+		});
+
+		services.AddSingleton<IAmazonS3>(_ =>
+		{
+			var config = new AmazonS3Config
+			{
+				ServiceURL = configuration["S3:Endpoint"],
+				ForcePathStyle = true
+			};
+
+			return new AmazonS3Client(configuration["S3:AccessKey"],
+				configuration["S3:SecretKey"], config);
 		});
 	}
 }

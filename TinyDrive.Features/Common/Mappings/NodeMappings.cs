@@ -1,4 +1,4 @@
-﻿using TinyDrive.Domain.Nodes;
+﻿using TinyDrive.Domain.Entities;
 using TinyDrive.Features.Features.Nodes.GetFolderItems;
 
 namespace TinyDrive.Features.Common.Mappings;
