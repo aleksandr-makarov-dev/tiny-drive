@@ -10,7 +10,7 @@ public sealed class DeleteNodeEndpoint : ICarterModule
 
 	public void AddRoutes(IEndpointRouteBuilder app)
 	{
-		app.MapDelete("api/nodes/{nodeId:guid}", HandleAsync);
+		app.MapPut("api/nodes/{nodeId:guid}/trash", HandleAsync);
 	}
 
 	private static async Task<IResult> HandleAsync([FromRoute] Guid nodeId, ISender sender)
