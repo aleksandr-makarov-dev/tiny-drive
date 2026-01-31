@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using TinyDrive.Domain.Common;
+using TinyDrive.Domain.Enums;
 
-namespace TinyDrive.Domain.Nodes;
+namespace TinyDrive.Domain.Entities;
 
 public sealed class Node : Entity
 {
@@ -12,6 +13,8 @@ public sealed class Node : Entity
 	public long? Size { get; init; }
 
 	public string? ContentType { get; init; }
+
+	public UploadStatus? UploadStatus { get; set; }
 
 	public bool IsFolder { get; init; }
 
