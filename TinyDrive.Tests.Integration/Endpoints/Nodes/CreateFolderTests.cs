@@ -2,7 +2,6 @@
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Shouldly;
 using TinyDrive.Features.Features.Nodes.CreateFolder;
 using Xunit;
@@ -62,6 +61,6 @@ public sealed class CreateFolderTests(CustomWebApplicationFactory webFactory) : 
 
 		problemDetailsResponse.ShouldNotBeNull();
 		problemDetailsResponse.Title.ShouldBe("Requested resource(s) not found.");
-		problemDetailsResponse.Extensions.ShouldContainKey("errors");
+		problemDetailsResponse.Detail.ShouldBe($"Parent folder with ID '{parentId}' was not found.");
 	}
 }

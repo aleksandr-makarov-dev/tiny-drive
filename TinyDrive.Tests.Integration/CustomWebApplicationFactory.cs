@@ -8,7 +8,7 @@ namespace TinyDrive.Tests.Integration;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-	private const string MinioUsername = "minioatest";
+	private const string MinioUsername = "miniotest";
 	private const string MinioPassword = "miniotest";
 	private const string MinioBucket = "tiny_drive";
 
