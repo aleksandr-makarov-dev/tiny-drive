@@ -26,7 +26,7 @@ Tiny Drive is a backend service for a cloud file storage system, working on the 
 ### 2. **TinyDrive.Features**
 
 * Implements application use cases and feature logic.
-* Likely defines operations such as file upload, download, listing, deletion, and other API actions.
+* Defines operations such as file upload, listing, deletion, and other API actions.
 * Interfaces and feature handlers are organized here.
 
 ### 3. **TinyDrive.Infrastructure**
