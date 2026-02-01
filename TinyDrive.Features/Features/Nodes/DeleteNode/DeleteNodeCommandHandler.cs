@@ -24,7 +24,7 @@ public sealed class DeleteNodeCommandHandler(
 		}
 
 		// If Node is marked for deletion don't do anything
-		if (node.DeletedAtUtc != null)
+		if (node.IsDeleted)
 		{
 			return Result.Success;
 		}

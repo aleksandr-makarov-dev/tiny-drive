@@ -45,14 +45,14 @@ internal sealed class CreateFolderCommandHandler(
 	private Task<Node?> FindParentAsync(Guid parentId, CancellationToken cancellationToken)
 	{
 		return dbContext.Nodes.AsNoTracking()
-			.FirstOrDefaultAsync(x => x.Id == parentId && x.IsFolder && !x.IsDeleted,
+			.FirstOrDefaultAsync(x => x.Id == parentId && x.IsFolder,
 				cancellationToken: cancellationToken);
 	}
 
 	private Task<bool> IsDuplicateFolderAsync(string name, Guid? parentId, CancellationToken cancellationToken)
 	{
 		return dbContext.Nodes.AnyAsync(
-			x => EF.Functions.ILike(name, x.Name) && x.ParentId == parentId && x.IsFolder && !x.IsDeleted,
+			x => EF.Functions.ILike(name, x.Name) && x.ParentId == parentId && x.IsFolder,
 			cancellationToken: cancellationToken);
 	}
 

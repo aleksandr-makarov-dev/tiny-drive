@@ -77,7 +77,7 @@ public sealed class CreateFileUploadUrlCommandHandler(
 
 	private Task<Node?> FindParentAsync(Guid parentId, CancellationToken cancellationToken)
 	{
-		return dbContext.Nodes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == parentId && x.IsFolder && !x.IsDeleted,
+		return dbContext.Nodes.AsNoTracking().FirstOrDefaultAsync(x => x.Id == parentId && x.IsFolder,
 			cancellationToken: cancellationToken);
 	}
 
@@ -88,8 +88,7 @@ public sealed class CreateFileUploadUrlCommandHandler(
 			x => EF.Functions.ILike(name, x.Name) &&
 			     EF.Functions.ILike(extension, x.Extension!) &&
 			     x.ParentId == parentId &&
-			     !x.IsFolder &&
-			     !x.IsDeleted,
+			     !x.IsFolder,
 			cancellationToken: cancellationToken);
 	}
 

@@ -17,7 +17,8 @@ public sealed class EmptyTrashCommandHandler(
 
 	public async Task<ErrorOr<Success>> Handle(EmptyTrashCommand request, CancellationToken cancellationToken)
 	{
-		var nodes = await dbContext.Nodes.Where(x => x.IsDeleted).ToListAsync(cancellationToken: cancellationToken);
+		var nodes = await dbContext.Nodes.IgnoreQueryFilters().Where(x => x.IsDeleted)
+			.ToListAsync(cancellationToken: cancellationToken);
 
 		try
 		{

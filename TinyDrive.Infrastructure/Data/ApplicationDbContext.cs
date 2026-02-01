@@ -45,9 +45,18 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 			.HasForeignKey(x => x.ParentId)
 			.OnDelete(DeleteBehavior.Restrict);
 
-		node.HasIndex(x => new { x.ParentId, x.Name, x.Extension, x.IsFolder })
+		node.HasIndex(x => new
+			{
+				x.ParentId,
+				x.Name,
+				x.Extension,
+				x.IsFolder,
+				x.IsDeleted
+			})
 			.IsUnique();
 
 		node.HasIndex(x => x.MaterializedPath);
+
+		node.HasQueryFilter(x => !x.IsDeleted);
 	}
 }
