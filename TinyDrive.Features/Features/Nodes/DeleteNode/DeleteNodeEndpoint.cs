@@ -19,6 +19,6 @@ public sealed class DeleteNodeEndpoint : ICarterModule
 
 		var result = await sender.Send(command);
 
-		return result.Match(_ => Results.NoContent(), errors => errors.ToProblem());
+		return result.Match(_ => Results.Ok(), errors => errors.ToProblem());
 	}
 }
